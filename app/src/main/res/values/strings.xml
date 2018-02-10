@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">HeartFit</string>
+
+        <string-array name="c_type">
+            <item>Client</item>
+            <item>Ambulance</item>
+        </string-array>
+
 </resources>
