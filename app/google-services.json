@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "591203064061",
+    "firebase_url": "https://heartfit-924f0.firebaseio.com",
+    "project_id": "heartfit-924f0",
+    "storage_bucket": "heartfit-924f0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:591203064061:android:a761843c4c171fba",
+        "android_client_info": {
+          "package_name": "com.codepunks.heartfit"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "591203064061-blubf8mlrd8du8halcf3iofidg1pjoch.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.codepunks.heartfit",
+            "certificate_hash": "8a3529814a297391f61d1034fe8120defd8244f6"
+          }
+        },
+        {
+          "client_id": "591203064061-d552d4m29tifrqh1adplqinh7ca6urjk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyASEQXXjam4WI5IHDX4vthEcs79_SiMWj4"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "591203064061-d552d4m29tifrqh1adplqinh7ca6urjk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
