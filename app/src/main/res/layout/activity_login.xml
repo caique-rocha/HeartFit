@@ -13,6 +13,7 @@
         android:paddingLeft="24dp"
         android:paddingRight="24dp">
 
+
         <ImageView android:src="@drawable/logo"
             android:layout_width="wrap_content"
             android:layout_height="72dp"
@@ -50,7 +51,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="email"
-            android:id="@+id/email"
+            android:id="@+id/email2"
+            android:inputType="textEmailAddress"
             android:textColor="#ffffff"
             android:textColorHint="#cdc1c1"
             android:backgroundTint="#ffffff"
@@ -59,13 +61,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="password"
-            android:id="@+id/password"
+            android:id="@+id/password2"
+            android:inputType="textPassword"
             android:textColor="#ffffff"
             android:textColorHint="#cdc1c1"
             android:backgroundTint="#ffffff"
             android:textCursorDrawable="@null"/>
 
-        <android.support.v7.widget.AppCompatButton
+        <Button
             android:id="@+id/btn_login"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
