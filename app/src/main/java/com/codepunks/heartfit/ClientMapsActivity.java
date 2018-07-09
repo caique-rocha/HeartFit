@@ -1,14 +1,20 @@
 package com.codepunks.heartfit;
 
+import android.*;
 import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Criteria;
 import android.location.Location;
+import android.location.LocationManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -29,6 +35,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -54,7 +61,6 @@ public class ClientMapsActivity extends FragmentActivity implements OnMapReadyCa
     private  Boolean requestBol = false;
     private Marker pickupMarker;
     private Button mCancel;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,7 +68,11 @@ public class ClientMapsActivity extends FragmentActivity implements OnMapReadyCa
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(ClientMapsActivity.this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_REQUEST_CODE);
+        }else {
+            mapFragment.getMapAsync(this);
+        }
         mRequest  = (Button)findViewById(R.id.request);
         mRequest.setVisibility(View.VISIBLE);
 
@@ -97,7 +107,7 @@ public class ClientMapsActivity extends FragmentActivity implements OnMapReadyCa
                 geoQuery.removeAllListeners();
                 if(driverFoundID != null){
                     DatabaseReference driverRed = FirebaseDatabase.getInstance().getReference().child("Users").child(driverFoundID);
-                    driverRed.setValue(true);
+                    driverRed.child("customerRideID").removeValue();
                     driverFoundID = null;
                 }
                 driverFound = false;
@@ -298,4 +308,6 @@ public class ClientMapsActivity extends FragmentActivity implements OnMapReadyCa
     public void cancel(View view) {
 
     }
+
+
 }

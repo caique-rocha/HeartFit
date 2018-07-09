@@ -39,7 +39,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.List;
 import java.util.Map;
 
-public class AmbulanceMapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
+public class AmbulanceMapsActivity extends FragmentActivity implements OnMapReadyCallback,GoogleApiClient.ConnectionCallbacks,GoogleApiClient.OnConnectionFailedListener,com.google.android.gms.location.LocationListener  {
     private Switch workingSwitch;
     private GoogleMap mMap;
     GoogleApiClient mGoogleApiClient;
@@ -61,9 +61,13 @@ public class AmbulanceMapsActivity extends FragmentActivity implements OnMapRead
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
-
-        workingSwitch = (Switch) findViewById(R.id.swich);
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(AmbulanceMapsActivity.this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_REQUEST_CODE);
+        }else {
+            mapFragment.getMapAsync(this);
+        }
+        workingSwitch =  findViewById(R.id.swich);
+        workingSwitch.setChecked(true);
         workingSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
@@ -127,6 +131,9 @@ public class AmbulanceMapsActivity extends FragmentActivity implements OnMapRead
                     }
                     LatLng driverLatlng = new LatLng(locationLat,locationLng);
                     pickupmarker = mMap.addMarker(new MarkerOptions().position(driverLatlng).title("Pick Up Location"));
+                    mMap.moveCamera(CameraUpdateFactory.newLatLng(driverLatlng));
+                    mMap.animateCamera(CameraUpdateFactory.zoomTo(11));
+
                 }
             }
 
@@ -170,27 +177,28 @@ public class AmbulanceMapsActivity extends FragmentActivity implements OnMapRead
         mMap = googleMap;
 
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(AmbulanceMapsActivity.this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_REQUEST_CODE);
-        }
-        buildGoogleApiClient();
+          ActivityCompat.requestPermissions(AmbulanceMapsActivity.this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_REQUEST_CODE);
+       }
+       buildGoogleApiClient();
         mMap.setMyLocationEnabled(true);
+
     }
-    protected synchronized void buildGoogleApiClient(){
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
+   protected synchronized void buildGoogleApiClient(){
+      mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
+               .addOnConnectionFailedListener(this)
+               .addApi(LocationServices.API)
                 .build();
-        mGoogleApiClient.connect();
-    }
+        mGoogleApiClient.connect();}
+
 
     @Override
     public void onLocationChanged(Location location) {
         if(getApplicationContext()!= null){
             mLastLocation = location;
             LatLng latLng = new LatLng(location.getLatitude(),location.getLongitude());
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-            mMap.animateCamera(CameraUpdateFactory.zoomTo(11));
+//            mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+//            mMap.animateCamera(CameraUpdateFactory.zoomTo(11));
             String userId = FirebaseAuth.getInstance().getUid();
             DatabaseReference refAvailable = FirebaseDatabase.getInstance().getReference("driversAvailable");
             DatabaseReference refWorking = FirebaseDatabase.getInstance().getReference("driversWorking");
@@ -243,6 +251,7 @@ public class AmbulanceMapsActivity extends FragmentActivity implements OnMapRead
         mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(1000);
         mLocationRequest.setFastestInterval(1000);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
     }
 
@@ -273,4 +282,6 @@ public class AmbulanceMapsActivity extends FragmentActivity implements OnMapRead
             }
         }
     }
+
+
 }

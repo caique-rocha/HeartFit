@@ -10,12 +10,12 @@ package com.codepunks.heartfit;
 
 public class FirstFragment extends Fragment{
 
-    View myView;
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        myView = inflater.inflate(R.layout.first_layout, container, false);
-        return myView;
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
+        View view = inflater.inflate(R.layout.first_layout, container, false);
+        return view;
     }
 }

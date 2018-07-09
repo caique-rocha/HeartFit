@@ -1,7 +1,15 @@
 package com.codepunks.heartfit;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Criteria;
+import android.location.LocationManager;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -22,7 +30,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-
+import android.Manifest;
 public class LoginActivity extends AppCompatActivity {
     private EditText mEmail, mPassword;
     private Button mLogin, mRegistration;
@@ -30,30 +38,15 @@ public class LoginActivity extends AppCompatActivity {
     private FirebaseAuth.AuthStateListener firebaseAuthListener;
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     String uid;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         getSupportActionBar().setTitle("");
         getSupportActionBar().setElevation(0);
-        mAuth = FirebaseAuth.getInstance();
-        mEmail = (EditText) findViewById(R.id.email2);
-        mPassword = (EditText) findViewById(R.id.password2);
 
-        mLogin = (Button) findViewById(R.id.btn_login) ;
-        mLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                final String email1 = mEmail.getText().toString();
-                final String password1 = mPassword.getText().toString();
-                if(!email1.equals("") && !password1.equals("")) {
-                    loginUser(email1, password1);
-                }else{
-                    Toast.makeText(LoginActivity.this, "Failed Login: Empty Inputs are not allowed", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
         TextView btn =(TextView)findViewById(R.id.link_signup);
 
         btn.setOnClickListener(new View.OnClickListener() {
@@ -62,6 +55,58 @@ public class LoginActivity extends AppCompatActivity {
                 startActivity(new Intent(LoginActivity.this, RegistrationActivity.class));
             }
         });
+        startService(new Intent(LoginActivity.this, onAppKilled.class));
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            // User is signed in
+            String uid = user.getUid().toString();
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("Users").child(uid);
+            ref.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if(dataSnapshot.exists())
+                        cwtype = dataSnapshot.child("ctype").getValue().toString();
+                    if(cwtype.equals("0")){
+                        Intent intentMain = new Intent(LoginActivity.this, AfterLoginActivity.class);
+                        intentMain.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intentMain);
+                        finish();
+                    }
+                    else if(cwtype.equals("1")){
+                        Intent intentMain = new Intent(LoginActivity.this, AmbulanceMapsActivity.class);
+                        intentMain.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intentMain);
+                        finish();
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        } else {
+            // No user is signed in
+            mAuth = FirebaseAuth.getInstance();
+            mEmail = (EditText) findViewById(R.id.email2);
+            mPassword = (EditText) findViewById(R.id.password2);
+
+            mLogin = (Button) findViewById(R.id.btn_login) ;
+            mLogin.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    final String email1 = mEmail.getText().toString();
+                    final String password1 = mPassword.getText().toString();
+                    if(!email1.equals("") && !password1.equals("")) {
+                        loginUser(email1, password1);
+                    }else{
+                        Toast.makeText(LoginActivity.this, "Failed Login: Empty Inputs are not allowed", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+
+        }
 
 
     }String cwtype;
@@ -81,7 +126,7 @@ public class LoginActivity extends AppCompatActivity {
                                     public void onDataChange(DataSnapshot dataSnapshot) {
                                         if(dataSnapshot.exists())
                                             cwtype = dataSnapshot.child("ctype").getValue().toString();
-                                        if(cwtype.equals("0")){
+                                        if(cwtype.equals("0") ){
                                             Intent intentMain = new Intent(LoginActivity.this, AfterLoginActivity.class);
                                             intentMain.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                             startActivity(intentMain);
@@ -115,4 +160,6 @@ public class LoginActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
     }
+
+
 }

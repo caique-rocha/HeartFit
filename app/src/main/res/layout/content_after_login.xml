@@ -8,29 +8,12 @@
     tools:context="com.codepunks.heartfit.AfterLoginActivity"
     tools:showIn="@layout/app_bar_after_login"
     >
-    
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/content_frame">
-        <Button
-            android:id ="@+id/push_button"
-            android:layout_width="180dp"
-            android:layout_height="180dp"
-            android:text="Emergency"
-            android:layout_gravity="center"
-            android:textSize="25sp"
-            android:padding="15dp"
-            android:background="@drawable/rounded_button"
-            android:onClick="cl"
-            />
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Share Location with Family?"
-            android:backgroundTint="#FFFFFF"
-            android:onClick="cl2"
-            />
+
     </FrameLayout>
 
 
