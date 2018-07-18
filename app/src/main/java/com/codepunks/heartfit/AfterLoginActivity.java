@@ -8,9 +8,11 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -28,9 +30,12 @@ import com.firebase.geofire.core.GeoHashQuery;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
+import android.Manifest;
+import android.widget.Toast;
 
 public class AfterLoginActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener ,com.google.android.gms.location.LocationListener {
@@ -68,7 +73,9 @@ public class AfterLoginActivity extends AppCompatActivity
 //                        .setAction("Action", null).show();
 //            }
 //        });
-
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(AfterLoginActivity.this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+        }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -113,6 +120,23 @@ public class AfterLoginActivity extends AppCompatActivity
         }
 
         return super.onOptionsItemSelected(item);
+    }
+    SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+            .findFragmentById(R.id.map);
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch(requestCode)
+        {
+            case 1:{
+                if(grantResults.length >0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    //mapFragment.getMapAsync();
+                }else{
+                    Toast.makeText(getApplicationContext(), "Please Provide the Permision", Toast.LENGTH_LONG).show();
+                }
+                break;
+            }
+        }
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
